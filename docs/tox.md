@@ -12,6 +12,7 @@ create one command that runs all three update environments.
 ```ini
 [testenv:update-actions]
 labels = update
+deps = gha-update
 commands = python -m gha_update
 
 [testenv:update-pre_commit]
