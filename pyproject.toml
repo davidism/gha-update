@@ -1,0 +1,67 @@
+[project]
+name = "gha-update"
+version = "0.1.0"
+description = "Update GitHub Actions version pins in GitHub workflow files."
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+authors = [{ name = "David Lord" }]
+requires-python = ">=3.12"
+dependencies = [
+    "click",
+    "httpx",
+]
+
+[project.scripts]
+gha-update = "gha_update._cli:cli"
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["gha_update"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src/gha_update"]
+show_error_codes = true
+pretty = true
+strict = true
+
+[tool.pyright]
+pythonVersion = "3.12"
+include = ["src/gha_update"]
+typeCheckingMode = "basic"
+
+[tool.ruff]
+src = ["src"]
+fix = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.lint]
+select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+order-by-type = false
+
+[tool.gha-update]
+tag-only = [
+    "slsa-framework/slsa-github-generator",
+]
