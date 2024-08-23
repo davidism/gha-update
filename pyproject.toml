@@ -11,6 +11,11 @@ dependencies = [
     "httpx",
 ]
 
+[project.urls]
+Changes = "https://gha-update.readthedocs.io/page/changes/"
+Documentation = "https://gha-update.readthedocs.io"
+Source = "https://github.com/davidism/gha-update/"
+
 [project.scripts]
 gha-update = "gha_update._cli:cli"
 
