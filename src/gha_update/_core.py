@@ -39,7 +39,9 @@ def load_config_path(path: os.PathLike[str] | str) -> Config:
     return {**default_config, **config}  # pyright: ignore
 
 
-async def update_workflows(config: Config | None = None) -> None:
+async def update_workflows(
+    config: Config | None = None, files: tuple[Path, ...] | None = None
+) -> None:
     if config is None:
         config = default_config
 
@@ -48,7 +50,8 @@ async def update_workflows(config: Config | None = None) -> None:
     else:
         base_url = f"https://{config['ghes-host']}/api/v3/"
 
-    workflows = read_workflows()
+    paths = files or iter_workflows()
+    workflows = read_workflows(paths)
     actions: set[str] = set()
 
     for path_actions in workflows.values():
@@ -88,10 +91,10 @@ def find_local_action(path: Path) -> Path | None:
     return None
 
 
-def read_workflows() -> dict[Path, set[str]]:
+def read_workflows(paths: Iterable[Path]) -> dict[Path, set[str]]:
     out: dict[Path, set[str]] = {}
 
-    for path in iter_workflows():
+    for path in paths:
         out[path] = set()
 
         for line in path.read_text("utf-8").splitlines():
