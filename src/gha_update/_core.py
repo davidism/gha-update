@@ -212,7 +212,6 @@ def write_workflows(
                     line = f"{left}@{tag}{maybe_quote}"
                 else:
                     line = f"{left}@{commit}{maybe_quote} # {tag}"
-                print(line)
 
             out.append(line)
 
