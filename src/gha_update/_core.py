@@ -151,10 +151,17 @@ async def get_highest_version(client: AsyncClient, name: str) -> tuple[str, str]
 
     try:
         return highest_version(tags)
-    except ValueError as e:
-        raise RuntimeError(
-            f"{name} has no version tags, it cannot be updated or pinned."
-        ) from e
+    except ValueError:
+        return await get_default_branch_commit(client, name)
+
+
+async def get_default_branch_commit(client: AsyncClient, name: str) -> tuple[str, str]:
+    response = await make_request(client, f"/repos/{name}")
+    data = response.json()
+    branch = data["default_branch"]
+    response = await make_request(client, f"/repos/{name}/commits/{branch}")
+    sha = response.json()["sha"]
+    return branch, sha
 
 
 async def get_versions(
