@@ -46,6 +46,7 @@ TOML file. The following options are available:
     `slsa-framework/slsa-github-generator` action can't work correctly when
     pinned as a hash.
 -   `ghes-host`: The hostname when using GitHub Enterprise Server.
+-   `check-paths`: Any additional paths to check alongside the default `.github` folder.
 
 
 Making requests to GitHub's API is rate limited, with a higher limit if an

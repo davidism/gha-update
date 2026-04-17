@@ -19,11 +19,13 @@ Config = t.TypedDict(
     {
         "tag-only": list[str],
         "ghes-host": str | None,
+        "check-paths": list[str]
     },
 )
 default_config: Config = {
     "tag-only": [],
     "ghes-host": None,
+    "check-paths": []
 }
 
 
@@ -48,7 +50,7 @@ async def update_workflows(config: Config | None = None) -> None:
     else:
         base_url = f"https://{config['ghes-host']}/api/v3/"
 
-    workflows = read_workflows()
+    workflows = read_workflows(config["check-paths"])
     actions: set[str] = set()
 
     for path_actions in workflows.values():
@@ -58,11 +60,12 @@ async def update_workflows(config: Config | None = None) -> None:
     write_workflows(config, workflows, versions)
 
 
-def iter_workflows() -> Iterator[Path]:
+def iter_workflows(paths_to_check: list[str]) -> Iterator[Path]:
     cwd = Path.cwd()
     gh_path = cwd / ".github"
     workflows_path = gh_path / "workflows"
     actions_path = gh_path / "actions"
+    extra_paths = [cwd / path_to_check for path_to_check in paths_to_check]
 
     if workflows_path.exists():
         for path in workflows_path.iterdir():
@@ -79,6 +82,24 @@ def iter_workflows() -> Iterator[Path]:
     if (file := find_local_action(cwd)) is not None:
         yield file
 
+    for extra_path in extra_paths:
+        if extra_path.exists():
+            if extra_path.is_dir():
+                # Find local actions at the root of specified path
+                if (file := find_local_action(extra_path)) is not None:
+                    yield file
+
+                # Find local actions within the folders of specified path
+                for path in extra_path.iterdir():
+                    if (file := find_local_action(path)) is not None:
+                        yield file
+
+            else:
+                if not (extra_path.name.endswith(".yaml") or extra_path.name.endswith(".yml")):
+                    continue
+                else:
+                    yield extra_path
+
 
 def find_local_action(path: Path) -> Path | None:
     for ext in "yaml", "yml":
@@ -88,10 +109,10 @@ def find_local_action(path: Path) -> Path | None:
     return None
 
 
-def read_workflows() -> dict[Path, set[str]]:
+def read_workflows(paths_to_check: list[str]) -> dict[Path, set[str]]:
     out: dict[Path, set[str]] = {}
 
-    for path in iter_workflows():
+    for path in iter_workflows(paths_to_check):
         out[path] = set()
 
         for line in path.read_text("utf-8").splitlines():
