@@ -104,10 +104,10 @@ def read_workflows() -> dict[Path, set[str]]:
 
 
 def find_name_in_line(line: str) -> str | None:
-    uses = line.partition(" uses:")[2].strip()
+    uses = line.partition(" uses:")[2].strip("'\" \t\n\r\f\v")
 
     # ignore other lines, and local and docker actions
-    if not uses or uses.startswith("./") or uses.startswith("docker://"):
+    if not uses or uses.startswith(("./", "docker://")):
         return None
 
     parts = uses.partition("@")[0].split("/")
@@ -211,11 +211,14 @@ def write_workflows(
             if (name := find_name_in_line(line)) is not None and name in versions:
                 left, _, right = line.partition("@")
                 tag, commit = versions[name]
-
-                if name in config["tag-only"]:
-                    line = f"{left}@{tag}"
+                if match := re.search(r"uses:\s*(['\"])?", line):
+                    maybe_quote = match.group(1) or ""
                 else:
-                    line = f"{left}@{commit} # {tag}"
+                    maybe_quote = ""
+                if name in config["tag-only"]:
+                    line = f"{left}@{tag}{maybe_quote}"
+                else:
+                    line = f"{left}@{commit}{maybe_quote} # {tag}"
 
             out.append(line)
 
