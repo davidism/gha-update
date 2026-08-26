@@ -13,13 +13,27 @@ globally with an installer such as [pipx]:
 [PyPI]: https://pypi.org/project/gha-update/
 [pip]: https://pip.pypa.io
 [pipx]: https://pipx.pypa.io
-
+[uv]: https://docs.astral.sh/uv
 ```
 $ pip install gha-update
 ```
 
 ```
 $ pipx install gha-update
+```
+
+```
+$ uv tool install gha-update
+```
+
+Or run directly with:
+
+```
+$ pipx run gha-update
+```
+
+```
+$ uvx gha-update
 ```
 
 ## Source
