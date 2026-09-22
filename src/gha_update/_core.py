@@ -107,7 +107,7 @@ def find_name_in_line(line: str) -> str | None:
     uses = line.partition(" uses:")[2].strip()
 
     # ignore other lines, and local and docker actions
-    if not uses or uses.startswith("./") or uses.startswith("docker://"):
+    if not uses or uses.startswith("./") or uses.startswith("docker://") or uses.startswith("$/"):
         return None
 
     parts = uses.partition("@")[0].split("/")
