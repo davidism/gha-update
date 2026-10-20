@@ -1,6 +1,6 @@
 [project]
 name = "gha-update"
-version = "0.3.0.dev"
+version = "0.3.0.dev0"
 description = "Update GitHub Actions version pins in GitHub workflow files."
 readme = "README.md"
 authors = [{ name = "David Lord" }]
@@ -21,7 +21,7 @@ Source = "https://github.com/davidism/gha-update/"
 gha-update = "gha_update._cli:cli"
 
 [build-system]
-requires = ["flit-core<4"]
+requires = ["flit-core >=3.11,<5"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.module]
@@ -29,13 +29,9 @@ name = "gha_update"
 
 [dependency-groups]
 dev = [
-    "mypy",
-    "pre-commit",
-    "pre-commit-uv",
-    "pyright",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
+    { include-group = "pre-commit" },
+    { include-group = "typing" },
+    { include-group = "tests" },
     "ruff",
     "tox",
     "tox-uv",
