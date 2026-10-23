@@ -1,4 +1,5 @@
 import asyncio
+import importlib
 from pathlib import Path
 
 import click
@@ -8,6 +9,7 @@ from ._core import update_workflows
 
 
 @click.command
+@click.version_option(importlib.metadata.version("gha_update"))
 @click.option(
     "config_path",
     "--config",

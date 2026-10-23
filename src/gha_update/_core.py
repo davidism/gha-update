@@ -204,6 +204,7 @@ def highest_version(tags: dict[str, str]) -> tuple[str, str]:
 def write_workflows(
     config: Config, paths: Iterable[Path], versions: Mapping[str, tuple[str, str]]
 ) -> None:
+    wspatt = re.compile(r"\S*(\s*)#")
     for path in paths:
         out: list[str] = []
 
@@ -215,7 +216,12 @@ def write_workflows(
                 if name in config["tag-only"]:
                     line = f"{left}@{tag}"
                 else:
-                    line = f"{left}@{commit} # {tag}"
+                    match_ws = wspatt.search(right)
+                    if match_ws:
+                        n_ws = len(match_ws.group(1))
+                    else:
+                        n_ws = 1
+                    line = f"{left}@{commit}{' ' * n_ws}# {tag}"
 
             out.append(line)
 
