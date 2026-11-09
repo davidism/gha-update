@@ -11,8 +11,8 @@ from collections.abc import Iterator
 from collections.abc import Mapping
 from pathlib import Path
 
-from httpx import AsyncClient
-from httpx import Response
+from httpx2 import AsyncClient
+from httpx2 import Response
 
 Config = t.TypedDict(
     "Config",

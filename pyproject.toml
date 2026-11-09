@@ -9,7 +9,7 @@ license-files = ["LICENSE.txt"]
 requires-python = ">=3.12"
 dependencies = [
     "click",
-    "httpx",
+    "httpx2",
 ]
 
 [project.urls]
